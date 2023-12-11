@@ -48,7 +48,7 @@ Add this configuration to `config/logging.php` file
     'driver'    => 'custom',
     'via'       => \MargaTampu\LaravelTeamsLogging\LoggerChannel::class,
     'level'     => 'debug',
-    'url'       => env('INCOMING_WEBHOOK_URL'),
+    'url'       => env('TEAMS_INCOMING_WEBHOOK_URL'),
     'style'     => 'simple',    // Available style is 'simple' and 'card', default is 'simple'
 ],
 ```
@@ -60,7 +60,7 @@ or simply add name to specify different project name for each connector.
     'driver'    => 'custom',
     'via'       => \MargaTampu\LaravelTeamsLogging\LoggerChannel::class,
     'level'     => 'debug',
-    'url'       => env('INCOMING_WEBHOOK_URL'),
+    'url'       => env('TEAMS_INCOMING_WEBHOOK_URL'),
     'style'     => 'simple',    // Available style is 'simple' and 'card', default is 'simple'
     'name'      => 'Dummy Project'
 ],
