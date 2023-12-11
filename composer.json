@@ -2,6 +2,11 @@
 	"name": "senthilhep/hep-laravel-teams-logging",
 	"description": "Laravel handler to sending messages to Microsoft Teams using the Incoming Webhook connector",
 	"license": "MIT",
+	"keywords": [
+		"teams-logging",
+		"laravel"
+	],
+	"homepage": "https://github.com/senthilhep/hep-laravel-teams-logging",
 	"authors": [
 		{
 			"name": "Senthil Prabu",
