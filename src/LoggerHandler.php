@@ -2,6 +2,7 @@
 
 namespace MargaTampu\LaravelTeamsLogging;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Monolog\Logger as MonologLogger;
 use Monolog\Handler\AbstractProcessingHandler;
@@ -21,6 +22,7 @@ class LoggerHandler extends AbstractProcessingHandler
     /**
      * @param $url
      * @param int $level
+     * @param string $style
      * @param string $name
      * @param bool $bubble
      */
@@ -28,9 +30,9 @@ class LoggerHandler extends AbstractProcessingHandler
     {
         parent::__construct($level, $bubble);
 
-        $this->url   = $url;
+        $this->url = $url;
         $this->style = $style;
-        $this->name  = $name;
+        $this->name = Config::get('app.name');
     }
 
     /**
@@ -45,20 +47,20 @@ class LoggerHandler extends AbstractProcessingHandler
 
             $facts = [];
 
-            foreach($record['context'] as $name => $value){
-                $facts[] = ['name' => $name, 'value' => (string) $value];
+            foreach ($record['context'] as $name => $value) {
+                $facts[] = ['name' => $name, 'value' => (string)$value];
             }
 
             // Date
             $facts[] = [
-                'name'  => 'Sent Date',
+                'name' => 'Sent Date',
                 'value' => date('D, M d Y H:i:s e'),
             ];
 
             // Route
             if (config('teams.show_route', false) && request()) {
                 $facts[] = [
-                    'name'  => 'Route',
+                    'name' => 'Route',
                     'value' => request()->getMethod() . ' : ' . request()->getPathInfo(),
                 ];
             }
@@ -66,7 +68,7 @@ class LoggerHandler extends AbstractProcessingHandler
             // (Controller) Action
             if (config('teams.show_action', false) && request() && request()->route()) {
                 $facts[] = [
-                    'name'  => 'Action',
+                    'name' => 'Action',
                     'value' => request()->route()->getActionName(),
                 ];
             }
@@ -86,7 +88,7 @@ class LoggerHandler extends AbstractProcessingHandler
      *
      * @param String $level
      * @param String $message
-     * @param array  $facts
+     * @param array $facts
      */
     public function useCardStyling($level, $message, $facts)
     {
@@ -94,27 +96,27 @@ class LoggerHandler extends AbstractProcessingHandler
 
         // LoggerMessage $data
         $loggerMessageData = [
-            'summary'    => $level . ($this->name ? ': ' . $this->name : ''),
-            'themeColor' => (string) $loggerColour,
-            'sections'   => [],
+            'summary' => $level . ($this->name ? ': ' . $this->name : ''),
+            'themeColor' => (string)$loggerColour,
+            'sections' => [],
         ];
 
         // LoggerMessage $data['sections']
         $section = [
-            'activityTitle'    => config('teams.verbose_title', false)
+            'activityTitle' => config('teams.verbose_title', false)
                 ? strtoupper($level) . ' : ' . $this->name . ' (' . config('app.url') . ')'
                 : $this->name,
             'activitySubtitle' => $message,
-            'facts'            => $facts,
-            'markdown'         => true,
+            'facts' => $facts,
+            'markdown' => true,
         ];
 
         if (config('teams.show_avatars', true)) {
-            $section['activityImage'] = (string) new LoggerAvatar($level);
+            $section['activityImage'] = (string)new LoggerAvatar($level);
         }
 
         if (config('teams.show_type', true)) {
-            $section['activitySubtitle'] = '<span style="color:#' . (string) $loggerColour . '">' . $message . '</span>';
+            $section['activitySubtitle'] = '<span style="color:#' . (string)$loggerColour . '">' . $message . '</span>';
         }
 
         $loggerMessageData['sections'][] = $section;
@@ -135,8 +137,8 @@ class LoggerHandler extends AbstractProcessingHandler
         $loggerColour = new LoggerColour($level);
 
         return new LoggerMessage([
-            'text'       => ($this->name ? $this->name . ' - ' : '') . '<span style="color:#' . (string) $loggerColour . '">' . $level .': '. $title. '</span><br> ' . $message,
-            'themeColor' => (string) $loggerColour,
+            'text' => '<span style="color:#' . (string)$loggerColour . '"><b>' . ($this->name ? $this->name . ' - ' : '') . Config::get('app.url') . '</b><br>' . $level . ': ' . $title . '</span><br>' . $message,
+            'themeColor' => (string)$loggerColour,
         ]);
     }
 
